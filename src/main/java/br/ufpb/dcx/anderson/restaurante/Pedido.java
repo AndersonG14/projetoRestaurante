@@ -6,7 +6,6 @@ public class Pedido {
     private int idPedido;
     private String status;
     private List<String> itens;
-
     private String mesa;
 
     public Pedido(int idPedido, String status, List<String> itens, String mesa){
