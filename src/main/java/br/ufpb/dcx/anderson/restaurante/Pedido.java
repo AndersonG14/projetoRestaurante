@@ -7,10 +7,13 @@ public class Pedido {
     private String status;
     private List<String> itens;
 
-    public Pedido(int idPedido, String status, List<String> itens){
+    private String mesa;
+
+    public Pedido(int idPedido, String status, List<String> itens, String mesa){
         this.idPedido = idPedido;
         this.status = "preparando"; //status inicial
         this.itens = itens;
+        this.mesa = mesa;
     }
 
     public int getIdPedido() {
@@ -33,13 +36,22 @@ public class Pedido {
         return itens;
     }
 
+    public String getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(String mesa) {
+        this.mesa = mesa;
+    }
+
     @Override
     public String toString() {
         return "Pedido{" +
                 "idPedido=" + idPedido +
                 ", status='" + status + '\'' +
                 ", itens=" + itens +
-                '}';
+                "' mesa=" + mesa +
+                "}";
     }
 
     @Override
