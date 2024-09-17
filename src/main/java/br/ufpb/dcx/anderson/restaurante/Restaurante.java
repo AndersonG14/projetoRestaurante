@@ -15,8 +15,8 @@ public class Restaurante implements GerenciamentoPedidos {
     }
 
     // Adicionar novo pedido
-    public void adicionarPedido(String mesa, List<String> itens) {
-        Pedido novoPedido = new Pedido(contadorPedidos, mesa, itens);
+    public void adicionarPedido(String mesa, List<String> itens, String status) {
+        Pedido novoPedido = new Pedido(contadorPedidos, status, itens, mesa);
         pedidos.put(contadorPedidos, novoPedido);
         System.out.println("Pedido #" + contadorPedidos + " adicionado com sucesso.");
         contadorPedidos++;

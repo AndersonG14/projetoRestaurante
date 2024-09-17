@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface GerenciamentoPedidos {
     // Método para adicionar um novo pedido
-    void adicionarPedido(String mesa, List<String> itens);
+    void adicionarPedido(String mesa, List<String> itens, String status);
 
     // Método para remover um pedido pelo ID
     void removerPedido(int idPedido);
