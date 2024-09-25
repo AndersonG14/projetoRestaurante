@@ -7,10 +7,10 @@ public interface GerenciamentoPedidos {
     void adicionarPedido(String mesa, List<String> itens, String status);
 
     // Método para remover um pedido pelo ID
-    void removerPedido(int idPedido);
+    void removerPedido(int idPedido) throws PedidoNaoEncontradoException;
 
     // Método para atualizar o status de um pedido
-    // void atualizarStatusPedido(int idPedido, String novoStatus);
+    void atualizarStatusPedido(int idPedido, String novoStatus) throws PedidoNaoEncontradoException;
 
     // Método para listar todos os pedidos
     void listarPedidos();

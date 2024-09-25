@@ -23,12 +23,17 @@ public class Restaurante implements GerenciamentoPedidos {
     }
 
     // Remover pedido pelo ID
-    public void removerPedido(int idPedido) {
+    public void removerPedido(int idPedido) throws PedidoNaoEncontradoException {
         if (pedidos.remove(idPedido) != null) {
             System.out.println("Pedido #" + idPedido + " removido.");
         } else {
-            System.out.println("Pedido não encontrado.");
+            throw new PedidoNaoEncontradoException("Este pedido não está cadastrado");
         }
+    }
+
+    // Método para retornar todos os pedidos
+    public Map<Integer, Pedido> getPedidos() {
+        return pedidos;
     }
 
 
@@ -41,6 +46,16 @@ public class Restaurante implements GerenciamentoPedidos {
                 pedido.toString();
                 System.out.println();
             }
+        }
+    }
+
+    public void atualizarStatusPedido(int idPedido, String novoStatus) throws PedidoNaoEncontradoException {
+        Pedido pedido = pedidos.get(idPedido); // Busca o pedido pelo ID
+        if (pedido != null) {
+            pedido.setStatus(novoStatus); // Atualiza o status do pedido
+            System.out.println("Status do Pedido #" + idPedido + " atualizado para: " + novoStatus);
+        } else {
+            throw new PedidoNaoEncontradoException("Pedido #" + idPedido + " não encontrado.");
         }
     }
 }
