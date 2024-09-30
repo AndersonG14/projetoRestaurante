@@ -15,19 +15,19 @@ public class Restaurante implements GerenciamentoPedidos {
     }
 
     // Adicionar novo pedido
-    public void adicionarPedido(String mesa, List<String> itens) {
-        Pedido novoPedido = new Pedido(contadorPedidos, mesa, itens);
+    public void adicionarPedido(String mesa, List<String> itens, String status) {
+        Pedido novoPedido = new Pedido(contadorPedidos, status, itens, mesa);
         pedidos.put(contadorPedidos, novoPedido);
         System.out.println("Pedido #" + contadorPedidos + " adicionado com sucesso.");
         contadorPedidos++;
     }
 
     // Remover pedido pelo ID
-    public void removerPedido(int idPedido) {
+    public void removerPedido(int idPedido) throws PedidoNaoEncontradoException {
         if (pedidos.remove(idPedido) != null) {
             System.out.println("Pedido #" + idPedido + " removido.");
         } else {
-            System.out.println("Pedido não encontrado.");
+            throw new PedidoNaoEncontradoException("Pedido não existe");
         }
     }
 
@@ -42,5 +42,20 @@ public class Restaurante implements GerenciamentoPedidos {
                 System.out.println();
             }
         }
+    }
+
+    public void atualizarStatusPedido(int idPedido, String novoStatus) throws PedidoNaoEncontradoException {
+        Pedido pedido = pedidos.get(idPedido); // Busca o pedido pelo ID
+        if (pedido != null) {
+            pedido.setStatus(novoStatus); // Atualiza o status do pedido
+            System.out.println("Status do Pedido #" + idPedido + " atualizado para: " + novoStatus);
+        } else {
+            throw new PedidoNaoEncontradoException("Pedido #" + idPedido + " não encontrado.");
+        }
+    }
+
+    // Método para retornar todos os pedidos
+    public Map<Integer, Pedido> getPedidos() {
+        return pedidos;
     }
 }
