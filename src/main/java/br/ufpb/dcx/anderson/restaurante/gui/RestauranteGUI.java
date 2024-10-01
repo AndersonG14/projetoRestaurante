@@ -1,25 +1,25 @@
 package br.ufpb.dcx.anderson.restaurante;
 
+import br.ufpb.dcx.anderson.restaurante.controller.RestauranteAddController;
+import br.ufpb.dcx.anderson.restaurante.controller.RestauranteAtualizarStatusPedidoController;
+import br.ufpb.dcx.anderson.restaurante.controller.RestauranteListarPedidosController;
+import br.ufpb.dcx.anderson.restaurante.controller.RestauranteRemoveController;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.ArrayList;
 
 public class RestauranteGUI extends JFrame {
     private Restaurante restaurante;
     private JTextField txtMesa, txtItens, txtStatus, txtIdPedido;
     private JTextArea outputArea;
     private JTable tabelaPedidos;
-    private DefaultTableModel modeloTabela;
 
     public RestauranteGUI() {
         restaurante = new Restaurante();
 
         setTitle("Gerenciamento de Pedidos - Restaurante");
-        setSize(600, 400);
+        setSize(600, 500); // Ajuste o tamanho da janela para acomodar a imagem
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -50,27 +50,16 @@ public class RestauranteGUI extends JFrame {
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
         // Tabela para mostrar os pedidos
-        modeloTabela = new DefaultTableModel();
-        modeloTabela.addColumn("ID");
-        modeloTabela.addColumn("Mesa");
-        modeloTabela.addColumn("Itens");
-        modeloTabela.addColumn("Status");
-
-        tabelaPedidos = new JTable(modeloTabela);
+        String[] colunas = {"ID", "Mesa", "Itens", "Status"};
+        tabelaPedidos = new JTable(new DefaultTableModel(new Object[][]{}, colunas));
         add(new JScrollPane(tabelaPedidos), BorderLayout.SOUTH);
 
-        // Ações dos botões
-        btnAdicionar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                adicionarPedido();
-            }
-        });
-
-        btnListar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                listarPedidos();
-            }
-        });
+        // Adicionando imagem ao painel (pode ser um logo do restaurante ou outra imagem relevante)
+        JLabel labelImagem = new JLabel();
+        ImageIcon imagem = new ImageIcon("C:\\Users\\Anderson Gomes\\Downloads\\restaurante,jpg"); // Substitua pelo caminho da sua imagem
+        labelImagem.setIcon(imagem);
+        labelImagem.setHorizontalAlignment(SwingConstants.CENTER); // Centralizar a imagem no JLabel
+        add(labelImagem, BorderLayout.WEST); // Colocando a imagem no lado esquerdo da interface
 
         // Painel para remover ou atualizar pedidos
         JPanel painelAtualizarRemover = new JPanel(new GridLayout(3, 2));
@@ -90,69 +79,31 @@ public class RestauranteGUI extends JFrame {
 
         add(painelAtualizarRemover, BorderLayout.EAST);
 
-        btnRemover.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                removerPedido();
-            }
-        });
+        // Configurando controladores para os botões
+        RestauranteAddController addController = new RestauranteAddController(
+                restaurante, txtMesa, txtItens, txtStatus, outputArea, tabelaPedidos
+        );
+        btnAdicionar.addActionListener(addController);
 
-        btnAtualizar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                atualizarStatusPedido();
-            }
-        });
+        RestauranteListarPedidosController listController = new RestauranteListarPedidosController(
+                restaurante, tabelaPedidos
+        );
+        btnListar.addActionListener(listController);
+
+        RestauranteRemoveController removeController = new RestauranteRemoveController(
+                restaurante, txtIdPedido, outputArea, tabelaPedidos
+        );
+        btnRemover.addActionListener(removeController);
+
+        RestauranteAtualizarStatusPedidoController updateController = new RestauranteAtualizarStatusPedidoController(
+                restaurante, txtIdPedido, txtStatus, outputArea, tabelaPedidos
+        );
+        btnAtualizar.addActionListener(updateController);
 
         setVisible(true);
-    }
-
-    private void adicionarPedido() {
-        String mesa = txtMesa.getText();
-        String itensStr = txtItens.getText();
-        String status = txtStatus.getText();
-        List<String> itens = new ArrayList<>();
-
-        for (String item : itensStr.split(",")) {
-            itens.add(item.trim());
-        }
-
-        restaurante.adicionarPedido(mesa, itens, status);
-        outputArea.append("Pedido adicionado: Mesa " + mesa + ", Itens: " + itens + ", Status: " + status + "\n");
-        listarPedidos(); // Atualiza a lista de pedidos na tabela
-    }
-
-    private void listarPedidos() {
-        modeloTabela.setRowCount(0); // Limpa a tabela
-        for (Pedido pedido : restaurante.getPedidos().values()) {
-            modeloTabela.addRow(new Object[]{pedido.getIdPedido(), pedido.getMesa(), String.join(", ", pedido.getItens()), pedido.getStatus()});
-        }
-    }
-
-    private void removerPedido() {
-        int idPedido = Integer.parseInt(txtIdPedido.getText());
-        try {
-            restaurante.removerPedido(idPedido);
-            outputArea.append("Pedido #" + idPedido + " removido.\n");
-        } catch (PedidoNaoEncontradoException ex) {
-            outputArea.append("Erro: " + ex.getMessage() + "\n");
-        }
-        listarPedidos(); // Atualiza a lista de pedidos na tabela
-    }
-
-    private void atualizarStatusPedido() {
-        int idPedido = Integer.parseInt(txtIdPedido.getText());
-        String novoStatus = txtStatus.getText();
-        try {
-            restaurante.atualizarStatusPedido(idPedido, novoStatus);
-            outputArea.append("Status do Pedido #" + idPedido + " atualizado para: " + novoStatus + "\n");
-        } catch (PedidoNaoEncontradoException ex) {
-            outputArea.append("Erro: " + ex.getMessage() + "\n");
-        }
-        listarPedidos(); // Atualiza a lista de pedidos na tabela
     }
 
     public static void main(String[] args) {
         new RestauranteGUI();
     }
 }
-
-
