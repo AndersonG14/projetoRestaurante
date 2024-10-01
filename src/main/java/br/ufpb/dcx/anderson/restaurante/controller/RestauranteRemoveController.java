@@ -2,36 +2,46 @@ package br.ufpb.dcx.anderson.restaurante.controller;
 
 import br.ufpb.dcx.anderson.restaurante.Restaurante;
 import br.ufpb.dcx.anderson.restaurante.PedidoNaoEncontradoException;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RestauranteRemoveController implements ActionListener {
     private Restaurante restaurante;
-    private JFrame janelaPrincipal;
+    private JTextField txtIdPedido;
+    private JTextArea outputArea;
+    private JTable tabelaPedidos;
 
-    public RestauranteRemoveController(Restaurante restaurante, JFrame janela) {
+    public RestauranteRemoveController(Restaurante restaurante, JTextField txtIdPedido, JTextArea outputArea, JTable tabelaPedidos) {
         this.restaurante = restaurante;
-        this.janelaPrincipal = janela;
+        this.txtIdPedido = txtIdPedido;
+        this.outputArea = outputArea;
+        this.tabelaPedidos = tabelaPedidos;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        int idPedido = Integer.parseInt(txtIdPedido.getText());
         try {
-            // Coleta o ID do pedido a ser removido
-            int idPedido = Integer.parseInt(JOptionPane.showInputDialog(janelaPrincipal, "Digite o ID do pedido a ser removido:"));
-
-            // Tenta remover o pedido
             restaurante.removerPedido(idPedido);
-
-            // Mensagem de sucesso
-            JOptionPane.showMessageDialog(janelaPrincipal, "Pedido #" + idPedido + " removido com sucesso.");
+            outputArea.append("Pedido #" + idPedido + " removido.\n");
         } catch (PedidoNaoEncontradoException ex) {
-            // Mensagem de erro caso o pedido não seja encontrado
-            JOptionPane.showMessageDialog(janelaPrincipal, "Erro: " + ex.getMessage());
-        } catch (NumberFormatException ex) {
-            // Mensagem de erro caso o ID fornecido não seja um número válido
-            JOptionPane.showMessageDialog(janelaPrincipal, "ID inválido. Por favor, digite um número.");
+            outputArea.append("Erro: " + ex.getMessage() + "\n");
         }
+
+        // Atualiza a tabela sem usar setRowCount ou addRow
+        atualizarTabela();
+    }
+
+    private void atualizarTabela() {
+        String[] colunas = {"ID", "Mesa", "Itens", "Status"};
+        Object[][] dados = restaurante.getPedidos().values().stream()
+                .map(p -> new Object[]{p.getIdPedido(), p.getMesa(), String.join(", ", p.getItens()), p.getStatus()})
+                .toArray(Object[][]::new);
+
+        tabelaPedidos.setModel(new DefaultTableModel(dados, colunas));
     }
 }
+

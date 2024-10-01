@@ -27,8 +27,13 @@ public class Restaurante implements GerenciamentoPedidos {
         if (pedidos.remove(idPedido) != null) {
             System.out.println("Pedido #" + idPedido + " removido.");
         } else {
-            throw new PedidoNaoEncontradoException("Pedido não existe");
+            throw new PedidoNaoEncontradoException("Este pedido não está cadastrado");
         }
+    }
+
+    // Método para retornar todos os pedidos
+    public Map<Integer, Pedido> getPedidos() {
+        return pedidos;
     }
 
 
@@ -52,10 +57,5 @@ public class Restaurante implements GerenciamentoPedidos {
         } else {
             throw new PedidoNaoEncontradoException("Pedido #" + idPedido + " não encontrado.");
         }
-    }
-
-    // Método para retornar todos os pedidos
-    public Map<Integer, Pedido> getPedidos() {
-        return pedidos;
     }
 }
